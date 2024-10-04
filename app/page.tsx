@@ -20,6 +20,8 @@ export default function Home() {
     const [businessName, setBusinessName] = useState('');
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
+    const [showForm, setShowForm] = useState(false);
+    const [copiedId, setCopiedId] = useState<number | null>(null);
 
     const [wifiList, setWifiList] = useState<WifiPassword[]>([]);
 
@@ -62,21 +64,52 @@ export default function Home() {
         }
     };
 
+    
+    const handleCopyPassword = (wifiId: number, password: string) => {
+        navigator.clipboard.writeText(password);
+        setCopiedId(wifiId);
+
+        // Reset the copied state after 2 seconds
+        setTimeout(() => {
+            setCopiedId(null);
+        }, 2000);
+    };
+
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-6 text-center">WiFi Passwords List</h1>
-                <ul className="space-y-4 mb-8">
+<ul className="space-y-4 mb-8">
                     {wifiList.map((wifi) => (
-                        <li key={wifi.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                            <p className="font-semibold">{wifi.network_name}: <span className="text-gray-600 dark:text-gray-400">{wifi.password}</span></p>
+                        <li key={wifi.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-xl font-bold">{wifi.network_name}</h2>
+                                <button
+                                    onClick={() => handleCopyPassword(wifi.id, wifi.password)}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                                >
+                                    {copiedId === wifi.id ? 'Copied!' : 'Copy Password'}
+                                </button>
+                            </div>
+                            <p className="text-lg">
+                                <span className="font-medium">Password:</span>{' '}
+                                <span className="text-gray-600 dark:text-gray-400">{wifi.password}</span>
+                            </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Address: {wifi.city}, {wifi.state}, {wifi.country}
+                                <span className="font-medium">Business Name:</span> {wifi.business_name}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <span className="font-medium">Address:</span>  {wifi.city}, {wifi.state} , {wifi.country}
                             </p>
                         </li>
                     ))}
                 </ul>
-
+                {!showForm &&
+                    <button
+                        className="w-full p-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+                        onClick={() => setShowForm(prevState => !prevState)}>Add new network</button>
+                }
+                {showForm && 
                 <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg space-y-4">
                     <div>
                         <label className="block font-medium mb-1">Network Name:</label>
@@ -142,6 +175,7 @@ export default function Home() {
                         Add WiFi Password
                     </button>
                 </form>
+                }
             </div>
         </div>
     );
