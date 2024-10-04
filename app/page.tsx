@@ -1,14 +1,108 @@
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 export default function Home() {
+  const [networkName, setNetworkName] = useState('');
+  const [password, setPassword] = useState('');
+  const [businessAddress, setBusinessAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [wifiList, setWifiList] = useState([]);
+
+  // Fetch WiFi passwords on page load
+  useEffect(() => {
+    const fetchWifiPasswords = async () => {
+      const { data, error } = await supabase.from('wifi_passwords').select('*');
+      if (error) console.error('Error fetching data:', error);
+      else setWifiList(data);
+    };
+    fetchWifiPasswords();
+  }, []);
+
+  // Function to handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.from('wifi_passwords').insert([
+      {
+        network_name: networkName,
+        password: password,
+        business_address: businessAddress,
+        city: city,
+        country: country,
+      },
+    ]);
+    if (error) {
+      console.error('Error adding WiFi password:', error);
+    } else {
+      alert('WiFi password added successfully');
+      setWifiList((prev) => [...prev, data[0]]);
+      setNetworkName('');
+      setPassword('');
+      setBusinessAddress('');
+      setCity('');
+      setCountry('');
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-          <h1>hello miss danielle</h1>
+    <div>
+      <h1>WiFi Passwords List</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Network Name:</label>
+          <input
+            type="text"
+            value={networkName}
+            onChange={(e) => setNetworkName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Business Address:</label>
+          <input
+            type="text"
+            value={businessAddress}
+            onChange={(e) => setBusinessAddress(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>City (Optional):</label>
+          <input
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Country (Optional):</label>
+          <input
+            type="text"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+          />
+        </div>
+        <button type="submit">Add WiFi Password</button>
+      </form>
 
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-
-      </footer>
+      <h2>Stored WiFi Passwords</h2>
+      <ul>
+        {wifiList.map((wifi) => (
+          <li key={wifi.id}>
+            <strong>{wifi.network_name}</strong>: {wifi.password} <br />
+            Address: {wifi.business_address}, {wifi.city}, {wifi.country}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
