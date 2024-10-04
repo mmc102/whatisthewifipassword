@@ -1,4 +1,5 @@
 'use client'
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
@@ -48,7 +49,9 @@ export default function Home() {
       console.error('Error adding WiFi password:', error);
     } else {
       alert('WiFi password added successfully');
+      if (data){
       setWifiList((prev) => [...prev, data[0]]);
+        }
       setNetworkName('');
       setPassword('');
       setBusinessAddress('');
