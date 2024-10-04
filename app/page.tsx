@@ -2,23 +2,35 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
+interface WifiPassword {
+    id: number;
+    network_name: string;
+    password: string;
+    business_address?: string;
+    city?: string;
+    country?: string;
+}
+
 export default function Home() {
   const [networkName, setNetworkName] = useState('');
   const [password, setPassword] = useState('');
   const [businessAddress, setBusinessAddress] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
-  const [wifiList, setWifiList] = useState([]);
 
-  // Fetch WiFi passwords on page load
-  useEffect(() => {
-    const fetchWifiPasswords = async () => {
-      const { data, error } = await supabase.from('wifi_passwords').select('*');
-      if (error) console.error('Error fetching data:', error);
-      else setWifiList(data);
-    };
-    fetchWifiPasswords();
-  }, []);
+    const [wifiList, setWifiList] = useState<WifiPassword[]>([]);
+
+    useEffect(() => {
+        const fetchWifiPasswords = async () => {
+            const { data, error } = await supabase.from('wifi_passwords').select('*');
+            if (error) {
+                console.error('Error fetching data:', error);
+            } else if (data) {
+                setWifiList(data);
+            }
+        };
+        fetchWifiPasswords();
+    }, []);
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
