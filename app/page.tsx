@@ -1,7 +1,9 @@
 'use client'
 
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { CheckIcon, ClipboardIcon, DocumentDuplicateIcon } from '@heroicons/react/20/solid';
 
 interface WifiPassword {
     id: number;
@@ -78,29 +80,30 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-bold mb-6 text-center">WiFi Passwords List</h1>
+                <h1 className="text-3xl font-bold mb-6 text-center">Public WiFi Passwords</h1>
 <ul className="space-y-4 mb-8">
                     {wifiList.map((wifi) => (
                         <li key={wifi.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-3">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-bold">{wifi.network_name}</h2>
-                                <button
+                                <h1 className="text-xl font-bold">
+                                    {wifi.business_name}
+                                </h1>
+                                <h2 className="text-xl">network - {wifi.network_name}</h2>
+                               <div className="flex items-center justify-between gap-2">
+                            <p className="text-xl">
+                                <span className=""> password - {wifi.password}</span>
+                            </p>
+                                        <button
                                     onClick={() => handleCopyPassword(wifi.id, wifi.password)}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                                    className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
                                 >
-                                    {copiedId === wifi.id ? 'Copied!' : 'Copy Password'}
+                                    {copiedId === wifi.id ? <CheckIcon width={24} height={24} /> : <DocumentDuplicateIcon width={24} height={24} />}
                                 </button>
-                            </div>
-                            <p className="text-lg">
-                                <span className="font-medium">Password:</span>{' '}
-                                <span className="text-gray-600 dark:text-gray-400">{wifi.password}</span>
-                            </p>
+                               </div>
+                            {wifi.city && wifi.state &&
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                <span className="font-medium">Business Name:</span> {wifi.business_name}
+                                {wifi.city}, {wifi.state}
                             </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                <span className="font-medium">Address:</span>  {wifi.city}, {wifi.state} , {wifi.country}
-                            </p>
+                            }
                         </li>
                     ))}
                 </ul>
