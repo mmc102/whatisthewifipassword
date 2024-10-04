@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { CheckIcon, DocumentDuplicateIcon, KeyIcon, PlusIcon, WifiIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, DocumentDuplicateIcon, KeyIcon, MagnifyingGlassCircleIcon, PlusIcon, WifiIcon } from '@heroicons/react/20/solid';
 
 interface WifiPassword {
     id: number;
@@ -85,45 +85,25 @@ export default function Home() {
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-6 text-center">Public WiFi Passwords</h1>
 
-                <div className="mb-6">
+                <div className="flex  rounded-lg items-center gap-2 mb-6 max-w-[480px] bg-gray-50 dark:bg-gray-700 ">
+                    <label><MagnifyingGlassCircleIcon height={48} width={48} /></label>
                     <input
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search by network name..."
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        className="w-full p-3  rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
 
-                <ul className="space-y-4 mb-8">
+                <ul className="grid grid-cols-1 gap-4 mb-8">
                     {filteredWifiList.map((wifi) => (
-                        <li key={wifi.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-3">
-                            <h1 className="text-xl font-bold">
-                                {wifi.business_name}
-                            </h1>
-
-                            <p className="text-xl flex items-center gap-2">
-                                <WifiIcon width={24} height={24} />
-                                <span className="">  {wifi.network_name}</span>
-                            </p>
-                            <div className="flex items-center justify-between gap-2">
-                                <p className="text-xl flex items-center gap-2">
-                                    <KeyIcon width={24} height={24} />
-                                    <span className="">  {wifi.password}</span>
-                                </p>
-                                <button
-                                    onClick={() => handleCopyPassword(wifi.id, wifi.password)}
-                                    className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-                                >
-                                    {copiedId === wifi.id ? <CheckIcon width={24} height={24} /> : <DocumentDuplicateIcon width={24} height={24} />}
-                                </button>
-                            </div>
-                            {wifi.city && wifi.state &&
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {wifi.city}, {wifi.state}
-                                </p>
-                            }
-                        </li>
+                        <WifiListItem
+                            key={wifi.id}
+                            wifi={wifi}
+                            copiedId={copiedId}
+                            handleCopyPassword={handleCopyPassword}
+                        />
                     ))}
                 </ul>
 
@@ -208,3 +188,43 @@ export default function Home() {
         </div>
     );
 }
+
+interface WifiListItemProps {
+    wifi: WifiPassword;
+    copiedId: number | null;
+    handleCopyPassword: (wifiId: number, password: string) => void;
+}
+
+const WifiListItem: React.FC<WifiListItemProps> = ({ wifi, copiedId, handleCopyPassword }) => {
+    return (
+        <li className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-3">
+            <h1 className="text-xl font-bold">
+                {wifi.business_name}
+            </h1>
+
+            <p className="text-xl flex items-center gap-2">
+                <WifiIcon width={24} height={24} />
+                <span className="">{wifi.network_name}</span>
+            </p>
+
+            <div className="flex items-center justify-between gap-2">
+                <p className="text-xl flex items-center gap-2">
+                    <KeyIcon width={24} height={24} />
+                    <span className="">{wifi.password}</span>
+                </p>
+                <button
+                    onClick={() => handleCopyPassword(wifi.id, wifi.password)}
+                    className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                >
+                    {copiedId === wifi.id ? <CheckIcon width={24} height={24} /> : <DocumentDuplicateIcon width={24} height={24} />}
+                </button>
+            </div>
+
+            {wifi.city && wifi.state && (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {wifi.city}, {wifi.state}
+                </p>
+            )}
+        </li>
+    );
+};
