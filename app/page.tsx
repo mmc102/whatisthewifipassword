@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { CheckIcon, ClipboardIcon, DocumentDuplicateIcon } from '@heroicons/react/20/solid';
+import { CheckIcon,  DocumentDuplicateIcon } from '@heroicons/react/20/solid';
 
 interface WifiPassword {
     id: number;
