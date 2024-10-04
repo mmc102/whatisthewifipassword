@@ -33,7 +33,7 @@ export default function Home() {
     }, []);
 
   // Function to handle form submission
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { data, error } = await supabase.from('wifi_passwords').insert([
       {
