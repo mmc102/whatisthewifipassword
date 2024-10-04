@@ -85,8 +85,7 @@ export default function Home() {
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-6 text-center">Public WiFi Passwords</h1>
 
-                <div className="flex  rounded-lg items-center gap-2 mb-6 max-w-[480px] bg-gray-50 dark:bg-gray-700 ">
-                    <label><MagnifyingGlassCircleIcon height={48} width={48} /></label>
+                <div className="flex rounded-lg items-center gap-2 mb-6  bg-gray-50 dark:bg-gray-700 ">
                     <input
                         type="text"
                         value={searchTerm}
